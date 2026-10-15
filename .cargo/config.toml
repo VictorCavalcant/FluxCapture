@@ -1,0 +1,7 @@
+[alias]
+xtask = "run --quiet --package xtask --"
+
+# Every x86-64 CPU that runs Windows 10/11 has SSE4.1/SSE4.2/POPCNT (x86-64-v2): audio mixing,
+# resampling and muxing loops vectorise better. The binary still starts on any Windows 10 machine.
+[target.x86_64-pc-windows-msvc]
+rustflags = ["-C", "target-cpu=x86-64-v2"]

@@ -1,0 +1,14 @@
+[package]
+name = "fluxcapture-telemetry"
+description = "FluxCapture observability: rotating log files with secret redaction, an in-memory log ring, metric history and the bottleneck diagnostics engine"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+log = { workspace = true, features = ["std"] }
+serde = { workspace = true }
+
+[lints]
+workspace = true

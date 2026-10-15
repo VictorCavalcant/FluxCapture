@@ -1,0 +1,79 @@
+[package]
+name = "fluxcapture-platform"
+description = "Operating-system integration for FluxCapture: screen/window capture (Windows.Graphics.Capture, DXGI Desktop Duplication), the Direct3D 11 compositor and colour converter, Media Foundation hardware encoders, WASAPI audio capture, hotkeys and system metrics"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+# The one crate allowed to contain `unsafe` (OS FFI; AGENTS.md §0.3). The workspace lints, except that
+# `unsafe_code` is `deny` instead of `forbid`: only the FFI modules opt in with `#[allow(unsafe_code)]`,
+# and every `unsafe` block carries a `// SAFETY:` comment.
+[lints.rust]
+unsafe_code = "deny"
+
+[lints.clippy]
+dbg_macro = "warn"
+todo = "warn"
+too_many_arguments = "allow"
+needless_range_loop = "allow"
+type_complexity = "allow"
+undocumented_unsafe_blocks = "deny"
+
+[dependencies]
+fluxcapture-time = { workspace = true }
+fluxcapture-audio = { workspace = true }
+crossbeam-channel = { workspace = true }
+log = { workspace = true }
+serde = { workspace = true }
+
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.62", features = [
+    "Foundation",
+    "Graphics",
+    "Graphics_Capture",
+    "Graphics_DirectX",
+    "Graphics_DirectX_Direct3D11",
+    "Win32_Devices_Display",
+    "Win32_Devices_FunctionDiscovery",
+    "Win32_Foundation",
+    "Win32_Globalization",
+    "Win32_Graphics_Direct3D",
+    "Win32_Graphics_Direct3D10",
+    "Win32_Graphics_Direct3D11",
+    "Win32_Graphics_Direct3D_Fxc",
+    "Win32_Graphics_Dwm",
+    "Win32_Graphics_Dxgi",
+    "Win32_Graphics_Dxgi_Common",
+    "Win32_Graphics_Gdi",
+    "Win32_Media",
+    "Win32_Media_Audio",
+    "Win32_Media_KernelStreaming",
+    "Win32_Media_MediaFoundation",
+    "Win32_Media_Multimedia",
+    "Win32_Security",
+    "Win32_Security_Cryptography",
+    "Win32_Storage_FileSystem",
+    "Win32_System_Com",
+    "Win32_System_Com_StructuredStorage",
+    "Win32_System_LibraryLoader",
+    "Win32_System_Ole",
+    "Win32_System_Performance",
+    "Win32_System_ProcessStatus",
+    "Win32_System_Registry",
+    "Win32_System_SystemInformation",
+    "Win32_System_Threading",
+    "Win32_System_Variant",
+    "Win32_System_WinRT",
+    "Win32_System_WinRT_Direct3D11",
+    "Win32_System_WinRT_Graphics_Capture",
+    "Win32_UI_HiDpi",
+    "Win32_UI_Input_KeyboardAndMouse",
+    "Win32_UI_Shell",
+    "Win32_UI_Shell_PropertiesSystem",
+    "Win32_UI_WindowsAndMessaging",
+] }
+windows-core = "0.62"
+
+[dev-dependencies]
+fluxcapture-mux = { workspace = true }

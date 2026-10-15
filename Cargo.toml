@@ -1,0 +1,72 @@
+[workspace]
+resolver = "3"
+members = ["crates/*", "apps/*", "xtask"]
+default-members = ["crates/*", "apps/*", "xtask"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+rust-version = "1.95"
+repository = "https://github.com/fluxcapture/fluxcapture"
+
+[workspace.dependencies]
+# internal (layer in brackets; `cargo xtask layers` enforces the order)
+fluxcapture-time = { path = "crates/time" }           # L0
+fluxcapture-mux = { path = "crates/mux" }             # L1
+fluxcapture-audio = { path = "crates/audio" }         # L1
+fluxcapture-telemetry = { path = "crates/telemetry" } # L1
+fluxcapture-platform = { path = "crates/platform" }   # L2 (the only crate allowed `unsafe`)
+fluxcapture-settings = { path = "crates/settings" }   # L3
+fluxcapture-pipeline = { path = "crates/pipeline" }   # L3
+fluxcapture-engine = { path = "crates/engine" }       # L4
+fluxcapture-ui = { path = "crates/ui" }               # L5
+
+# foundation
+thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.9"
+log = "0.4"
+crossbeam-channel = "0.5"
+
+# ui
+egui = "0.36"
+eframe = { version = "0.36", default-features = false, features = ["glow", "default_fonts"] }
+rfd = "0.17"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+dbg_macro = "warn"
+todo = "warn"
+too_many_arguments = "allow"
+needless_range_loop = "allow"
+type_complexity = "allow"
+
+# Dependencies are optimised even in dev builds: the capture/encode path is unusable at opt-level 0.
+[profile.dev.package."*"]
+opt-level = 2
+
+[profile.dev]
+opt-level = 1
+
+# Audio DSP and muxing hot loops: tests run realtime-factor checks.
+[profile.dev.package.fluxcapture-audio]
+opt-level = 3
+
+[profile.dev.package.fluxcapture-mux]
+opt-level = 3
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+panic = "unwind" # the panic hook + catch_unwind keep a recording alive (AGENTS.md §0.7)
+strip = "debuginfo"
+
+# A release build with symbols for profiling (ETW / WPA / Superluminal).
+[profile.profiling]
+inherits = "release"
+debug = true
+strip = "none"

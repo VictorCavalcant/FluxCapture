@@ -1,0 +1,19 @@
+[package]
+name = "fluxcapture-setup"
+description = "FluxCapture setup program: per-user install and uninstall for Windows (cargo xtask dist packs the files into it)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+fluxcapture-platform = { workspace = true }
+egui = { workspace = true }
+eframe = { workspace = true }
+rfd = { workspace = true }
+log = { workspace = true }
+raw-window-handle = "0.6"
+
+[lints]
+workspace = true

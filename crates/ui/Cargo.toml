@@ -1,0 +1,25 @@
+[package]
+name = "fluxcapture-ui"
+description = "FluxCapture desktop interface (egui): scenes and sources, preview, mixer, diagnostics, settings, setup assistant, recovery and tray"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+fluxcapture-time = { workspace = true }
+fluxcapture-audio = { workspace = true }
+fluxcapture-telemetry = { workspace = true }
+fluxcapture-platform = { workspace = true }
+fluxcapture-settings = { workspace = true }
+fluxcapture-pipeline = { workspace = true }
+fluxcapture-engine = { workspace = true }
+egui = { workspace = true }
+eframe = { workspace = true }
+rfd = { workspace = true }
+log = { workspace = true }
+raw-window-handle = "0.6"
+tray-icon = { version = "0.21", default-features = false }
+
+[lints]
+workspace = true

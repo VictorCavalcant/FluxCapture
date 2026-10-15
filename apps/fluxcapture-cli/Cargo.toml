@@ -1,0 +1,18 @@
+[package]
+name = "fluxcapture-cli"
+description = "FluxCapture from the command line: record, replay, benchmark, remux, recover, probe devices"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+fluxcapture-time = { workspace = true }
+fluxcapture-mux = { workspace = true }
+fluxcapture-platform = { workspace = true }
+fluxcapture-settings = { workspace = true }
+fluxcapture-engine = { workspace = true }
+serde_json = { workspace = true }
+
+[lints]
+workspace = true

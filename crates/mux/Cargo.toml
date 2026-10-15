@@ -1,0 +1,18 @@
+[package]
+name = "fluxcapture-mux"
+description = "Containers for FluxCapture: crash-resilient Matroska writer, tolerant Matroska reader, faststart MP4 writer and remux/recovery"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+fluxcapture-time = { workspace = true }
+thiserror = { workspace = true }
+log = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }
+
+[lints]
+workspace = true

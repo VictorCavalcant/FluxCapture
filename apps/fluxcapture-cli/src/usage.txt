@@ -1,0 +1,24 @@
+fluxcapture-cli — FluxCapture without a window
+
+  devices                          list GPUs, monitors, windows, encoders, audio devices, webcams
+  record  [--seconds N] [opts]     record (press Enter to stop early)
+  replay  [--seconds N] [--clip S] run the replay buffer for N s, then save the last S s
+  bench   [--seconds N] [--json]   record to a temporary file and print a performance report
+  wizard                           test this machine's encoders and disk, print a recommendation
+  remux   IN.mkv [OUT.mp4]         copy an MKV into an MP4 (no re-encoding)
+  recover IN.mkv [OUT.mkv]         rebuild an interrupted recording (the original is untouched)
+
+options:
+  --out DIR             recording folder
+  --codec h264|hevc     video codec
+  --fps N               frame rate
+  --res R               native | 720p | 1080p | 1440p | 2160p | WxH
+  --rate R              quality:1-100 | vbr:KBPS | cbr:KBPS
+  --monitor ID          capture a monitor (\\.\DISPLAY1; see `devices`)
+  --region X,Y,W,H      capture part of the monitor
+  --window TEXT         capture the first window whose title or process matches
+  --encoder ID          a specific encoder (mft:{...}; see `devices`)
+  --profile N           start from profile N of the saved settings
+  --no-audio            no audio sources
+  --mp4                 remux recordings / save replays as MP4
+  --config DIR          use another configuration folder
