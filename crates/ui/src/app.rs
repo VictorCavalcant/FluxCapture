@@ -47,6 +47,9 @@ pub struct FluxApp {
     pub tray: Option<tray::Tray>,
     hidden: bool,
     window_setup_done: bool,
+    hwnd: Option<u64>,
+    /// Whether the main window is currently excluded from captures (mirrors `general.exclude_from_capture`).
+    capture_excluded: bool,
     styled_theme: Option<fluxcapture_settings::Theme>,
     last_window_refresh: Instant,
     pub confirm_quit: bool,
@@ -78,6 +81,8 @@ impl FluxApp {
             tray,
             hidden: false,
             window_setup_done: false,
+            hwnd: None,
+            capture_excluded: false,
             styled_theme: None,
             last_window_refresh: Instant::now(),
             confirm_quit: false,
@@ -122,10 +127,20 @@ impl FluxApp {
         if let Err(e) = fluxcapture_platform::system::set_window_icon(hwnd, (&app_icon::dib(big), big), (&app_icon::dib(small), small)) {
             log::info!("cannot set the window icon: {e}");
         }
-        if self.engine.settings().general.exclude_from_capture
-            && let Err(e) = fluxcapture_platform::system::exclude_window_from_capture(hwnd, true)
-        {
-            log::info!("cannot exclude the window from capture: {e}");
+        self.hwnd = Some(hwnd);
+    }
+
+    /// Applies `general.exclude_from_capture` to the main window as soon as the setting changes.
+    fn sync_capture_exclusion(&mut self) {
+        let Some(hwnd) = self.hwnd else { return };
+        let want = self.engine.settings().general.exclude_from_capture;
+        if want == self.capture_excluded {
+            return;
+        }
+        // Marked as applied even on failure, so a failing call is not retried every frame.
+        self.capture_excluded = want;
+        if let Err(e) = fluxcapture_platform::system::exclude_window_from_capture(hwnd, want) {
+            log::info!("cannot change the window's capture exclusion: {e}");
         }
     }
 
@@ -391,6 +406,7 @@ impl eframe::App for FluxApp {
 
     fn ui(&mut self, ui: &mut egui::Ui, frame: &mut eframe::Frame) {
         self.setup_native_window(frame);
+        self.sync_capture_exclusion();
         let ctx = ui.ctx().clone();
         egui::Panel::top("top").frame(egui::Frame::side_top_panel(ui.style()).inner_margin(egui::Margin::symmetric(10, 6))).show(ui, |ui| self.top_bar(ui));
         egui::Panel::bottom("bottom").resizable(true).default_size(210.0).min_size(150.0).show(ui, |ui| {

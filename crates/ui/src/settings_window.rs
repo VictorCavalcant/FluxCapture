@@ -82,8 +82,8 @@ fn general(app: &FluxApp, ui: &mut Ui, s: &mut Settings) {
         ui.checkbox(
             &mut s.general.exclude_from_capture,
             app.tr(
-                "ocultar as janelas do FluxCapture das gravações (aplica ao reiniciar)",
-                "hide FluxCapture's windows from recordings (applies after restart)",
+                "ocultar as janelas do FluxCapture de gravações, prints e compartilhamento de tela",
+                "hide FluxCapture's windows from recordings, screenshots and screen sharing",
             ),
         );
         ui.end_row();

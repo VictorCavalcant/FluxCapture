@@ -20,7 +20,8 @@ use serde::{Deserialize, Serialize};
 pub mod template;
 
 /// Current file format version.
-pub const VERSION: u32 = 1;
+/// 2: `exclude_from_capture` now defaults to off (screenshots and window sharing must see the app); older files are reset once.
+pub const VERSION: u32 = 2;
 
 /// UI language.
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -73,7 +74,7 @@ impl Default for General {
             theme: Theme::Dark,
             start_minimized: false,
             minimize_to_tray: false,
-            exclude_from_capture: true,
+            exclude_from_capture: false,
             confirm_stop: false,
             process_priority: Priority::AboveNormal,
             first_run: true,
@@ -738,6 +739,9 @@ impl Settings {
     /// Every value clamped into range, lists bounded, indices valid.
     pub fn sanitized(&self) -> Settings {
         let mut s = self.clone();
+        if s.version < 2 {
+            s.general.exclude_from_capture = false;
+        }
         s.version = VERSION;
         if s.profiles.is_empty() {
             s.profiles = Settings::default().profiles;
@@ -905,6 +909,15 @@ pub fn import_profile(text: &str) -> Result<Profile, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn capture_exclusion_is_off_by_default_and_reset_for_old_files() {
+        assert!(!Settings::default().general.exclude_from_capture);
+        let old = Settings::from_toml("version = 1\n[general]\nexclude_from_capture = true\n").unwrap();
+        assert!(!old.general.exclude_from_capture);
+        let new = Settings::from_toml("version = 2\n[general]\nexclude_from_capture = true\n").unwrap();
+        assert!(new.general.exclude_from_capture);
+    }
 
     #[test]
     fn defaults_round_trip() {
